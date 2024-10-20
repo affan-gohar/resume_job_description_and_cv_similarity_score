@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <title>Resume Job Description Similarity</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input[type="file"] {
+            display: block;
+            margin: 10px 0;
+        }
+        button {
+            background-color: #5cb85c;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #4cae4c;
+        }
+        .radio-group {
+            margin: 15px 0;
+        }
+        .result {
+            margin-top: 20px;
+            background: #e9ecef;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        .result h2 {
+            color: #333;
+        }
+        .similarity-score {
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+        }
+        .best-match {
+            margin-top: 10px;
+            font-weight: bold;
+            color: #155724;
+            background-color: #c3e6cb;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #c3e6cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Resume Job Description Similarity Checker</h1>
+        <form action="/" method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="choice">Choose an option:</label>
+                <div class="radio-group">
+                    <label><input type="radio" name="choice" value="cv" required> Rank multiple CVs against one job description</label>
+                    <label><input type="radio" name="choice" value="job" required> Rank one CV against multiple job descriptions</label>
+                </div>
+            </div>
+
+            <div class="form-group" id="job-description-group">
+                <label for="job_description">Upload Job Description:</label>
+                <input type="file" name="job_description" accept=".pdf, .docx" required>
+                <label for="job_type">Job Description Type:</label>
+                <select name="job_type" required>
+                    <option value="word">Word Document (.docx)</option>
+                    <option value="pdf">PDF Document (.pdf)</option>
+                </select>
+            </div>
+
+            <div class="form-group" id="resume-group">
+                <label for="resumes">Upload Resumes:</label>
+                <input type="file" name="resumes" accept=".pdf, .docx" multiple required>
+                <label for="resume_type">Resume Type:</label>
+                <select name="resume_type" required>
+                    <option value="word">Word Document (.docx)</option>
+                    <option value="pdf">PDF Document (.pdf)</option>
+                </select>
+            </div>
+
+            <button type="submit">Submit</button>
+        </form>
+
+        <div class="result">
+            <!-- Result will be displayed here -->
+            {% if result %}
+                <h2>Results</h2>
+                <div>
+                    {% for item in result %}
+                        <div class="similarity-score">
+                            <strong>{{ item.filename }}</strong> similarity: {{ item.similarity_score|round(2) }}
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="best-match">
+                    <strong>Best Matching: {{ best_match.filename }}</strong> with similarity: {{ best_match.similarity_score|round(2) }}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
